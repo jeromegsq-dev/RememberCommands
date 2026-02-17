@@ -15,17 +15,19 @@ function remembercmd() {
     return 1
   fi
 
-  # Check API key
-  if [[ -z "$MISTRAL_API_KEY" ]]; then
-    echo "Error: MISTRAL_API_KEY is not set."
-    echo "Export it in your .zshrc: export MISTRAL_API_KEY=\"your-key-here\""
+  # Check API key (CODESTRAL_API_KEY takes priority, falls back to MISTRAL_API_KEY)
+  local api_key="${CODESTRAL_API_KEY:-$MISTRAL_API_KEY}"
+  if [[ -z "$api_key" ]]; then
+    echo "Error: CODESTRAL_API_KEY is not set."
+    echo "Export it in your .zshrc: export CODESTRAL_API_KEY=\"your-key-here\""
+    echo "Get your key at: https://console.mistral.ai (onglet Codestral)"
     return 1
   fi
 
   # Validate API URL uses HTTPS
   if [[ ! "$REMEMBERCOMMANDS_API_URL" =~ ^https:// ]]; then
     echo "Error: REMEMBERCOMMANDS_API_URL must use HTTPS for security (found: $REMEMBERCOMMANDS_API_URL)"
-    echo "The default is: https://api.mistral.ai/v1/chat/completions"
+    echo "The default is: https://codestral.mistral.ai/v1/chat/completions"
     return 1
   fi
 
@@ -66,12 +68,12 @@ function remembercmd() {
       max_tokens: $max_tokens
     }')
 
-  # Call Mistral API with enhanced security options
+  # Call Codestral API with enhanced security options
   local response
   response=$(curl -s -w "\n%{http_code}" \
     -X POST "$REMEMBERCOMMANDS_API_URL" \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $MISTRAL_API_KEY" \
+    -H "Authorization: Bearer $api_key" \
     -d "$payload" \
     --max-time 15 \
     --tlsv1.2 \
@@ -84,7 +86,7 @@ function remembercmd() {
 
   # Handle HTTP errors
   if [[ "$http_code" -ne 200 ]]; then
-    echo "Error: Mistral API returned HTTP $http_code"
+    echo "Error: Codestral API returned HTTP $http_code"
     local error_msg
     error_msg=$(echo "$body" | jq -r '.message // .error.message // "Unknown error"' 2>/dev/null)
     # Sanitize error message (remove potential API keys or sensitive data)

@@ -46,10 +46,10 @@ Store your API key in macOS Keychain instead of plaintext:
 
 ```bash
 # One-time setup
-security add-generic-password -a "$USER" -s "mistral-api-key" -w "your-api-key-here"
+security add-generic-password -a "$USER" -s "codestral-api-key" -w "your-api-key-here"
 
 # Add to ~/.zshrc
-export MISTRAL_API_KEY=$(security find-generic-password -a "$USER" -s "mistral-api-key" -w 2>/dev/null)
+export CODESTRAL_API_KEY=$(security find-generic-password -a "$USER" -s "codestral-api-key" -w 2>/dev/null)
 ```
 
 ### What to Avoid
@@ -63,7 +63,7 @@ export MISTRAL_API_KEY=$(security find-generic-password -a "$USER" -s "mistral-a
 ✅ **Do:**
 - Use environment-specific keys
 - Rotate keys regularly
-- Set up billing alerts in Mistral console
+- Set up billing alerts in Codestral console
 - Review API usage periodically
 
 ## Reporting a Vulnerability
@@ -141,7 +141,7 @@ It is **NOT designed for:**
 - ❌ CI/CD pipelines
 
 ### Trust Model
-- The plugin **trusts the Mistral API** to return safe commands
+- The plugin **trusts the Codestral API** to return safe commands
 - Users **must review** all commands before execution
 - The plugin **cannot guarantee** 100% detection of dangerous commands
 - Advanced obfuscation techniques may bypass detection
@@ -150,10 +150,10 @@ It is **NOT designed for:**
 
 If you believe your API key has been compromised:
 
-1. **Immediately revoke the key** at https://console.mistral.ai/api-keys
+1. **Immediately revoke the key** at https://console.mistral.ai (onglet Codestral)
 2. **Generate a new key** and update your configuration
 3. **Review API usage logs** for unauthorized activity
-4. **Report suspicious activity** to Mistral support
+4. **Report suspicious activity** to Mistral AI support
 5. **Check billing** for unexpected charges
 
 ## Updates and Patches

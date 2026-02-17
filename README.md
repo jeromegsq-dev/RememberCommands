@@ -1,6 +1,6 @@
 # RememberCommands - Natural Language to Shell Commands
 
-Translate natural language into shell commands directly in your terminal using Mistral AI. The suggested command is pre-filled on your command line so you can review it before pressing Enter.
+Translate natural language into shell commands directly in your terminal using [Codestral](https://mistral.ai/news/codestral) (Mistral AI's code-specialized model). The suggested command is pre-filled on your command line so you can review it before pressing Enter.
 
 https://github.com/user-attachments/assets/847def64-2822-4754-a1c1-fe602b57c011
 
@@ -9,7 +9,7 @@ https://github.com/user-attachments/assets/847def64-2822-4754-a1c1-fe602b57c011
 - [Oh My Zsh](https://ohmyz.sh/) installed
 - `curl` (pre-installed on macOS)
 - `jq` - install with `brew install jq`
-- A [Mistral AI API key](https://console.mistral.ai/api-keys)
+- A [Codestral API key](https://console.mistral.ai) (onglet "Codestral" sur console.mistral.ai)
 
 ## Installation
 
@@ -25,8 +25,9 @@ bash install.sh
 Add the following to your `~/.zshrc`:
 
 ```zsh
-# Mistral API key (see Security section below for secure storage options)
-export MISTRAL_API_KEY="your-key-here"
+# Codestral API key (see Security section below for secure storage options)
+# Obtenez votre clé sur https://console.mistral.ai (onglet Codestral)
+export CODESTRAL_API_KEY="your-key-here"
 
 # Add remembercommands to your plugins list
 plugins=(remembercommands)
@@ -77,12 +78,13 @@ All settings can be overridden in your `~/.zshrc` (before the `plugins=()` line)
 
 | Variable | Default | Description |
 |---|---|---|
-| `MISTRAL_API_KEY` | *(required)* | Your Mistral AI API key |
+| `CODESTRAL_API_KEY` | *(required)* | Your Codestral API key (from console.mistral.ai, onglet Codestral) |
+| `MISTRAL_API_KEY` | *(fallback)* | Fallback si `CODESTRAL_API_KEY` n'est pas défini |
 | `REMEMBERCOMMANDS_ALIAS` | `remembercmd` | Custom command alias (e.g., `rr`, `rc`, `cmd`) |
-| `REMEMBERCOMMANDS_MODEL` | `ministral-3b-latest` | Mistral model to use |
+| `REMEMBERCOMMANDS_MODEL` | `codestral-latest` | Codestral model to use |
 | `REMEMBERCOMMANDS_TEMPERATURE` | `0.2` | Response creativity (0-1) |
 | `REMEMBERCOMMANDS_MAX_TOKENS` | `200` | Max response length |
-| `REMEMBERCOMMANDS_API_URL` | `https://api.mistral.ai/v1/chat/completions` | API endpoint |
+| `REMEMBERCOMMANDS_API_URL` | `https://codestral.mistral.ai/v1/chat/completions` | API endpoint |
 | `REMEMBERCOMMANDS_SYSTEM_PROMPT` | *(built-in)* | Custom system prompt |
 
 ## Security
@@ -95,17 +97,17 @@ All settings can be overridden in your `~/.zshrc` (before the `plugins=()` line)
 
 ```bash
 # Store your API key in Keychain (one-time setup)
-security add-generic-password -a "$USER" -s "mistral-api-key" -w "your-api-key-here"
+security add-generic-password -a "$USER" -s "codestral-api-key" -w "your-api-key-here"
 
 # Add this to your ~/.zshrc to retrieve it automatically
-export MISTRAL_API_KEY=$(security find-generic-password -a "$USER" -s "mistral-api-key" -w 2>/dev/null)
+export CODESTRAL_API_KEY=$(security find-generic-password -a "$USER" -s "codestral-api-key" -w 2>/dev/null)
 ```
 
 **Alternative: Environment Variable** (less secure)
 
 ```bash
 # Add to ~/.zshrc
-export MISTRAL_API_KEY="your-key-here"
+export CODESTRAL_API_KEY="your-key-here"
 ```
 
 ⚠️ **Warning:** Storing the key in `~/.zshrc` means:
@@ -131,9 +133,9 @@ When detected, you'll see a warning prompt before the command is pre-filled.
 
 ### Rate Limiting & API Usage
 
-Be mindful of API usage. The Mistral AI API has rate limits and each request incurs costs. Consider:
-- Reviewing your API usage at https://console.mistral.ai
-- Setting up billing alerts in your Mistral account
+Be mindful of API usage. The Codestral API has rate limits and each request incurs costs. Consider:
+- Reviewing your API usage at https://console.mistral.ai (onglet Codestral)
+- Setting up billing alerts in your Mistral AI account
 - Using the plugin judiciously for actual needs
 
 ### Security Features
@@ -159,22 +161,22 @@ Do not disclose security issues publicly until they are resolved.
 ## How It Works
 
 1. You type `remembercmd <your question>`
-2. The plugin sends your question to Mistral AI with a system prompt that instructs the model to return only the raw shell command
+2. The plugin sends your question to Codestral (Mistral AI) with a system prompt that instructs the model to return only the raw shell command
 3. The response is cleaned up and placed on your command line using `print -z`
 4. You review the command, optionally edit it, then press Enter to execute
 
 ## Troubleshooting
 
-**`Error: MISTRAL_API_KEY is not set`**
-Add `export MISTRAL_API_KEY="your-key"` to your `~/.zshrc` and run `source ~/.zshrc`.
+**`Error: CODESTRAL_API_KEY is not set`**
+Add `export CODESTRAL_API_KEY="your-key"` to your `~/.zshrc` and run `source ~/.zshrc`. Obtenez votre clé sur https://console.mistral.ai (onglet Codestral).
 
 **`Error: jq is required but not installed`**
 Run `brew install jq`.
 
-**`Error: Mistral API returned HTTP 401`**
-Your API key is invalid. Check it at https://console.mistral.ai/api-keys.
+**`Error: Codestral API returned HTTP 401`**
+Your API key is invalid. Check it at https://console.mistral.ai (onglet Codestral).
 
-**`Error: Mistral API returned HTTP 429`**
+**`Error: Codestral API returned HTTP 429`**
 Rate limited. Wait a moment and try again.
 
 **Command not found: remembercmd**
